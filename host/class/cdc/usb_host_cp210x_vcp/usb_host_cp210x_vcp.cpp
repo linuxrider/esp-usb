@@ -12,9 +12,6 @@
 #include "freertos/task.h"
 #include "sdkconfig.h"
 
-#ifndef CONFIG_COMPILER_CXX_EXCEPTIONS
-#error This component requires C++ exceptions
-#endif
 
 #define CP210X_READ_REQ  (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_RECIP_INTERFACE | USB_BM_REQUEST_TYPE_DIR_IN)
 #define CP210X_WRITE_REQ (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_RECIP_INTERFACE | USB_BM_REQUEST_TYPE_DIR_OUT)
@@ -26,13 +23,13 @@ CP210x::CP210x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uin
     esp_err_t err;
     err = this->open_vendor_specific(vid, pid, this->intf, dev_config);
     if (err != ESP_OK) {
-        throw (err);
+        ESP_LOGE(TAG, "Failed to open CP210x device with PID: %d", pid);
     }
 
     // CP210X interfaces must be explicitly enabled
     err = this->send_custom_request(CP210X_WRITE_REQ, CP210X_CMD_IFC_ENABLE, 1, this->intf, 0, NULL);
     if (err != ESP_OK) {
-        throw (err);
+        ESP_LOGE(TAG, "Failed to enable CP210x device with PID: %d", pid);
     }
 };
 

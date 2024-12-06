@@ -13,9 +13,6 @@
 #include "freertos/task.h"
 #include "sdkconfig.h"
 
-#ifndef CONFIG_COMPILER_CXX_EXCEPTIONS
-#error This component requires C++ exceptions
-#endif
 
 #define CH34X_READ_REQ  (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_RECIP_DEVICE | USB_BM_REQUEST_TYPE_DIR_IN)
 #define CH34X_WRITE_REQ (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_RECIP_DEVICE | USB_BM_REQUEST_TYPE_DIR_OUT)
@@ -70,7 +67,7 @@ CH34x::CH34x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8
 {
     const esp_err_t err = this->open_vendor_specific(vid, pid, this->intf, dev_config);
     if (err != ESP_OK) {
-        throw (err);
+        ESP_LOGE(TAG, "Failed to open CH34x device with PID: %d", pid);
     }
 };
 
