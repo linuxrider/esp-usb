@@ -16,8 +16,10 @@
 #define CP210X_READ_REQ  (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_RECIP_INTERFACE | USB_BM_REQUEST_TYPE_DIR_IN)
 #define CP210X_WRITE_REQ (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_RECIP_INTERFACE | USB_BM_REQUEST_TYPE_DIR_OUT)
 
+static const char *TAG = "CP210X";
+
 namespace esp_usb {
-eps_err_t CP210x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx)
+esp_err_t CP210x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx)
 {
     this->intf = interface_idx;
     esp_err_t err;

@@ -16,8 +16,10 @@
 #define FTDI_READ_REQ  (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_DIR_IN)
 #define FTDI_WRITE_REQ (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_DIR_OUT)
 
+static const char *TAG = "FT23X";
+
 namespace esp_usb {
-esp_err_t FT23x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, CdcAcmDevice *device, uint8_t interface_idx)
+esp_err_t FT23x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx)
 {
     this->intf = interface_idx;
     this->user_data_cb = dev_config->data_cb;

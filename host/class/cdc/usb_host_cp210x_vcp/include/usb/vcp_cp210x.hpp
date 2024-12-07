@@ -109,7 +109,7 @@ public:
     static constexpr std::array<uint16_t, 3> pids = {CP210X_PID, CP2105_PID, CP2108_PID};
 
 private:
-    const uint8_t intf;
+    uint8_t intf;
 
     // Make open functions from CdcAcmDevice class private
     using CdcAcmDevice::open;

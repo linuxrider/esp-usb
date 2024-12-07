@@ -62,9 +62,9 @@ public:
     static constexpr std::array<uint16_t, 2> pids = {FT232_PID, FT231_PID};
 
 private:
-    const uint8_t intf;
-    const cdc_acm_data_callback_t user_data_cb;
-    const cdc_acm_host_dev_callback_t user_event_cb;
+    uint8_t intf;
+    cdc_acm_data_callback_t user_data_cb;
+    cdc_acm_host_dev_callback_t user_event_cb;
     void *user_arg;
     uint16_t uart_state;
 
