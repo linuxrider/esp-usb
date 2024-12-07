@@ -21,16 +21,16 @@ namespace esp_usb {
 class CH34x : public CdcAcmDevice {
 public:
     /**
-     * @brief Constructor for this CH34x driver
+     * @brief Open CH34x device
      *
      * @note USB Host library and CDC-ACM driver must be already installed
      *
      * @param[in] pid            PID eg. CH340_PID
      * @param[in] dev_config     CDC device configuration
      * @param[in] interface_idx  Interface number
-     * @return CdcAcmDevice      Pointer to created and opened CH34x device
+     * @return esp_err_t
      */
-    CH34x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx = 0);
+    esp_err_t open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx = 0);
 
     /**
      * @brief Set Line Coding method
@@ -57,7 +57,7 @@ public:
     static constexpr std::array<uint16_t, 3> pids = {CH340_PID, CH340_PID_1, CH341_PID};
 
 private:
-    const uint8_t intf;
+    uint8_t intf;
 
     // Make open functions from CdcAcmDevice class private
     using CdcAcmDevice::open;

@@ -17,20 +17,23 @@
 #define CP210X_WRITE_REQ (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_RECIP_INTERFACE | USB_BM_REQUEST_TYPE_DIR_OUT)
 
 namespace esp_usb {
-CP210x::CP210x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx)
-    : intf(interface_idx)
+eps_err_t CP210x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx)
 {
+    this->intf = interface_idx;
     esp_err_t err;
     err = this->open_vendor_specific(vid, pid, this->intf, dev_config);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to open CP210x device with PID: %d", pid);
+        return err;
     }
 
     // CP210X interfaces must be explicitly enabled
     err = this->send_custom_request(CP210X_WRITE_REQ, CP210X_CMD_IFC_ENABLE, 1, this->intf, 0, NULL);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to enable CP210x device with PID: %d", pid);
+        return err;
     }
+    return err;
 };
 
 esp_err_t CP210x::line_coding_get(cdc_acm_line_coding_t *line_coding)

@@ -51,16 +51,16 @@ namespace esp_usb {
 class CP210x : public CdcAcmDevice {
 public:
     /**
-     * @brief Constructor for this CP210x driver
+     * @brief Open CP210x device
      *
      * @note USB Host library and CDC-ACM driver must be already installed
      *
      * @param[in] pid            PID eg. CP210X_PID
      * @param[in] dev_config     CDC device configuration
      * @param[in] interface_idx  Interface number
-     * @return CdcAcmDevice      Pointer to created and opened CP210x device
+     * @return esp_err_t
      */
-    CP210x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx = 0);
+    esp_err_t open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx = 0);
 
     /**
      * @brief Get Line Coding method

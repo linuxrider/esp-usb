@@ -62,13 +62,15 @@
 static const char *TAG = "CH34X";
 
 namespace esp_usb {
-CH34x::CH34x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx)
-    : intf(interface_idx)
+esp_err_t CH34x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx)
 {
+    this->intf = interface_idx;
     const esp_err_t err = this->open_vendor_specific(vid, pid, this->intf, dev_config);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to open CH34x device with PID: %d", pid);
+        return err;
     }
+    return err;
 };
 
 esp_err_t CH34x::line_coding_set(cdc_acm_line_coding_t *line_coding)

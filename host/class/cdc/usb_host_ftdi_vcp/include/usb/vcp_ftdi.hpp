@@ -26,16 +26,16 @@ namespace esp_usb {
 class FT23x : public CdcAcmDevice {
 public:
     /**
-     * @brief Constructor for this FTDI driver
+     * @brief Open FTDI device
      *
      * @note USB Host library and CDC-ACM driver must be already installed
      *
      * @param[in] pid            PID eg. FTDI_FT232_PID
      * @param[in] dev_config     CDC device configuration
      * @param[in] interface_idx  Interface number
-     * @return CdcAcmDevice      Pointer to created and opened FTDI device
+     * @return esp_err_t
      */
-    FT23x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx = 0);
+    esp_err_t open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx = 0);
 
     /**
      * @brief Set Line Coding method

@@ -17,10 +17,13 @@
 #define FTDI_WRITE_REQ (USB_BM_REQUEST_TYPE_TYPE_VENDOR | USB_BM_REQUEST_TYPE_DIR_OUT)
 
 namespace esp_usb {
-FT23x::FT23x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx)
-    : intf(interface_idx), user_data_cb(dev_config->data_cb), user_event_cb(dev_config->event_cb),
-      user_arg(dev_config->user_arg), uart_state(0)
+esp_err_t FT23x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, CdcAcmDevice *device, uint8_t interface_idx)
 {
+    this->intf = interface_idx;
+    this->user_data_cb = dev_config->data_cb;
+    this->user_event_cb = dev_config->event_cb;
+    this->user_arg = dev_config->user_arg;
+    this->uart_state = 0;
     cdc_acm_host_device_config_t ftdi_config;
     memcpy(&ftdi_config, dev_config, sizeof(cdc_acm_host_device_config_t));
     // FT23x reports modem status in first two bytes of RX data
@@ -40,12 +43,14 @@ FT23x::FT23x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8
     err = this->open_vendor_specific(vid, pid, this->intf, &ftdi_config);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to open FT23x device with PID: %d", pid);
+        return err;
     }
 
     // FT23x interface must be first reset and configured (115200 8N1)
     err = this->send_custom_request(FTDI_WRITE_REQ, FTDI_CMD_RESET, 0, this->intf + 1, 0, NULL);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to reset FT23x device with PID: %d", pid);
+        return err;
     }
 
     cdc_acm_line_coding_t line_coding = {
@@ -57,7 +62,9 @@ FT23x::FT23x(uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8
     err = this->line_coding_set(&line_coding);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to set line coding for FT23x device with PID: %d", pid);
+        return err;
     }
+    return err;
 };
 
 esp_err_t FT23x::line_coding_set(cdc_acm_line_coding_t *line_coding)
