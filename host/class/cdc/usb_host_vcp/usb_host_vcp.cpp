@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <stdexcept>
 #include "usb/vcp.hpp"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
@@ -28,15 +27,7 @@ CdcAcmDevice *VCP::open(uint16_t _vid, uint16_t _pid, const cdc_acm_host_device_
         if (drv.vid == _vid) {
             for (uint16_t p : drv.pids) {
                 if (p == _pid) {
-                    try {
-                        return drv.open(_pid, dev_config, interface_idx);
-                    } catch (esp_err_t &e) {
-                        switch (e) {
-                        case ESP_ERR_NO_MEM: throw std::bad_alloc();
-                        case ESP_ERR_NOT_FOUND: // fallthrough
-                        default: return nullptr;
-                        }
-                    }
+                    return drv.open(_pid, dev_config, interface_idx);
                 }
             }
         }
@@ -62,21 +53,19 @@ CdcAcmDevice *VCP::open(const cdc_acm_host_device_config_t *dev_config, uint8_t 
     // dev_config->connection_timeout_ms is normally meant for 1 device,
     // but here it is a timeout for the whole function call
     cdc_acm_host_device_config_t _config = *dev_config;
-    _config.connection_timeout_ms = 1;
+    _config.connection_timeout_ms = 500; // minimum to work with esphome
 
     // Try opening all registered devices, return on first success
     do {
         for (vcp_driver drv : drivers) {
             for (uint16_t pid : drv.pids) {
-                try {
-                    return drv.open(pid, &_config, interface_idx);
-                } catch (esp_err_t &e) {
-                    switch (e) {
-                    case ESP_ERR_NOT_FOUND: break;
-                    case ESP_ERR_NO_MEM: throw std::bad_alloc();
-                    default: return nullptr;
-                    }
+                auto dev = drv.open(pid, &_config, interface_idx);
+                if (dev == nullptr) {
+                    continue;
+                } else {
+                    return dev;
                 }
+                
             }
         }
         vTaskDelay(pdMS_TO_TICKS(50));

@@ -49,9 +49,16 @@ public:
         static_assert(T::vid != 0, "Every VCP driver must contain supported VID in'vid' integer");
         std::vector<uint16_t> pids(T::pids.begin(), T::pids.end()); // Convert array to vector
         vcp_driver new_driver = vcp_driver([](uint16_t pid, const cdc_acm_host_device_config_t *dev_config, uint8_t interface_idx) {
-            return static_cast<CdcAcmDevice *> (new T(pid, dev_config, interface_idx)); // Lambda function: Open factory method
+            T* dev = new T();
+            esp_err_t err = dev->open_device(pid, dev_config, interface_idx);
+            if (err != ESP_OK) {
+                return static_cast<CdcAcmDevice *> (nullptr);
+            }
+            else {
+                return static_cast<CdcAcmDevice *> (dev); // Lambda function: Open factory method
+            }
         }, T::vid, pids);
-        drivers.push_back(new_driver);
+    drivers.push_back(new_driver);
     }
 
     /**

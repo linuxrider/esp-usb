@@ -23,14 +23,14 @@ eps_err_t CP210x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *
     esp_err_t err;
     err = this->open_vendor_specific(vid, pid, this->intf, dev_config);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to open CP210x device with PID: %d", pid);
+        ESP_LOGI(TAG, "Failed to open CP210x device with PID: %d", pid);
         return err;
     }
 
     // CP210X interfaces must be explicitly enabled
     err = this->send_custom_request(CP210X_WRITE_REQ, CP210X_CMD_IFC_ENABLE, 1, this->intf, 0, NULL);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to enable CP210x device with PID: %d", pid);
+        ESP_LOGI(TAG, "Failed to enable CP210x device with PID: %d", pid);
         return err;
     }
     return err;
