@@ -44,14 +44,14 @@ esp_err_t FT23x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *d
     esp_err_t err;
     err = this->open_vendor_specific(vid, pid, this->intf, &ftdi_config);
     if (err != ESP_OK) {
-        ESP_LOGI(TAG, "Failed to open FT23x device with PID: %d", pid);
+        ESP_LOGI(TAG, "Failed to open FT23x device with PID: 0x%04x", pid);
         return err;
     }
 
     // FT23x interface must be first reset and configured (115200 8N1)
     err = this->send_custom_request(FTDI_WRITE_REQ, FTDI_CMD_RESET, 0, this->intf + 1, 0, NULL);
     if (err != ESP_OK) {
-        ESP_LOGI(TAG, "Failed to reset FT23x device with PID: %d", pid);
+        ESP_LOGI(TAG, "Failed to reset FT23x device with PID: 0x%04x", pid);
         return err;
     }
 
@@ -63,7 +63,7 @@ esp_err_t FT23x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *d
     };
     err = this->line_coding_set(&line_coding);
     if (err != ESP_OK) {
-        ESP_LOGI(TAG, "Failed to set line coding for FT23x device with PID: %d", pid);
+        ESP_LOGI(TAG, "Failed to set line coding for FT23x device with PID: 0x%04x", pid);
         return err;
     }
     return err;

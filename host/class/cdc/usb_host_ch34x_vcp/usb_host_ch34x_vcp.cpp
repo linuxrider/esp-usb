@@ -67,7 +67,7 @@ esp_err_t CH34x::open_device(uint16_t pid, const cdc_acm_host_device_config_t *d
     this->intf = interface_idx;
     const esp_err_t err = this->open_vendor_specific(vid, pid, this->intf, dev_config);
     if (err != ESP_OK) {
-        ESP_LOGI(TAG, "Failed to open CH34x device with PID: %d", pid);
+        ESP_LOGI(TAG, "Failed to open CH34x device with PID: 0x%04x", pid);
         return err;
     }
     return err;
